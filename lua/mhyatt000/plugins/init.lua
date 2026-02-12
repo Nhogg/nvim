@@ -97,6 +97,20 @@ return {
                 },
             }
         end
+    },-- Status Line (Powerline)
+    {
+        'nvim-lualine/lualine.nvim',
+        event = "VeryLazy",
+        config = function()
+            require('lualine').setup({
+                options = {
+                    theme = 'auto',
+                    globalstatus = true,
+                    section_separators = { left = '', right = ''},
+                    component_separators = { left = '', right = ''},
+                }
+            })
+        end
     },
 
 }
