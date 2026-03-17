@@ -67,28 +67,13 @@ local function find_venv_path()
 end
 
 
--- local venv_path = vim.fn.getcwd() .. "/.venv/bin/python"
--- local venv_path = os.getenv("VIRTUAL_ENV") .. "/bin/python"
-local venv_path = find_venv_path() .. "/bin/python"
-
-vim.lsp.start("pyright", {
-  -- pythonPath is deprecated; prefer venv detection:
-  settings = {
-    python = (function()
-      local venv = os.getenv("VIRTUAL_ENV")
-      if venv then
-        return { venvPath = vim.fn.fnamemodify(venv, ":h"), venv = vim.fn.fnamemodify(venv, ":t") }
-      else
-        return {}  -- pyright will use system interpreter
-      end
-    end)(),
-  },
-})
+-- Pyright is now configured via mason-lspconfig
 
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
 	ensure_installed = {
+		'pyright',
 		'rust_analyzer',
         'eslint',
         "ts_ls",  
