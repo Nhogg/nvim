@@ -1,4 +1,4 @@
-require("mhyatt000")
+require("nhogg")
 
 vim.opt.number = true
 vim.opt.relativenumber = true

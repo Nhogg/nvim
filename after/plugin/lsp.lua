@@ -61,13 +61,7 @@ local function find_venv_path()
 end
 
 
-<<<<<<< HEAD
--- Pyright is now configured via mason-lspconfig
-=======
--- local venv_path = vim.fn.getcwd() .. "/.venv/bin/python"
--- local venv_path = os.getenv("VIRTUAL_ENV") .. "/bin/python"
-local venv_path = find_venv_path() .. "/bin/python"
->>>>>>> f606411 (feat: add conform.lua for auto-lint)
+-- Pyright is configured via mason-lspconfig below
 
 
 require('mason').setup({})
