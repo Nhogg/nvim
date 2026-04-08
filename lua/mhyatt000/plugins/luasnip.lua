@@ -30,9 +30,9 @@ return {
         t({"\\[", "\t"}), i(1), t({"", "\\]"}), i(0)
       }),
 
-      -- 3. ENVIRONMENT ('beg') -> \begin{...} ... \end{...}
+      -- 3. ENVIRONMENT ('begin{') -> \begin{...} ... \end{...}
       -- Uses <> delimiters so it doesn't break LaTeX braces
-      s({trig = "beg", snippetType = "autosnippet"},
+      s({trig = "begin{", snippetType = "autosnippet"},
         fmt(
           [[
           \begin{<>}

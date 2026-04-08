@@ -1,12 +1,6 @@
 -- READ THIS!
 -- https://github.com/VonHeikemen/lsp-zero.nvim
 
-local function start(server, opts)
-  local cfg = vim.lsp.config(server, opts or {})
-  vim.lsp.start(cfg)
-end
-
-
 local lsp = require('lsp-zero')
 require('cmp_luasnip')
 
@@ -67,7 +61,13 @@ local function find_venv_path()
 end
 
 
+<<<<<<< HEAD
 -- Pyright is now configured via mason-lspconfig
+=======
+-- local venv_path = vim.fn.getcwd() .. "/.venv/bin/python"
+-- local venv_path = os.getenv("VIRTUAL_ENV") .. "/bin/python"
+local venv_path = find_venv_path() .. "/bin/python"
+>>>>>>> f606411 (feat: add conform.lua for auto-lint)
 
 
 require('mason').setup({})
@@ -76,14 +76,29 @@ require('mason-lspconfig').setup({
 		'pyright',
 		'rust_analyzer',
         'eslint',
-        "ts_ls",  
+        "ts_ls",
+		'pyright',
 	},
     automatic_installation = true,
 	handlers = {
-	lsp.default_setup,
-	lua_ls = function()
+		lsp.default_setup,
+		lua_ls = function()
 			local lua_opts = lsp.nvim_lua_ls()
-            start("lua_ls", lua_opts)
+			require('lspconfig').lua_ls.setup(lua_opts)
+		end,
+		pyright = function()
+			require('lspconfig').pyright.setup({
+				settings = {
+					python = (function()
+						local venv = os.getenv("VIRTUAL_ENV")
+						if venv then
+							return { venvPath = vim.fn.fnamemodify(venv, ":h"), venv = vim.fn.fnamemodify(venv, ":t") }
+						else
+							return {}  -- pyright will use system interpreter
+						end
+					end)(),
+				},
+			})
 		end,
 	}
 })
