@@ -39,7 +39,20 @@ return {
     'rafamadriz/friendly-snippets',
     {
         'nvim-telescope/telescope.nvim',
-        dependencies = { { 'nvim-lua/plenary.nvim' } }
+        dependencies = { { 'nvim-lua/plenary.nvim' } },
+        config = function()
+            local telescope = require('telescope.builtin')
+            local actions = require('telescope.actions')
+            require('telescope').setup({
+                defaults = {
+                    mappings = {
+                        i = {
+                            ["<Tab>"] = actions.select_default,
+                        },
+                    },
+                },
+            })
+        end
     },
 
     {
