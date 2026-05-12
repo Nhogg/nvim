@@ -41,10 +41,24 @@ return {
         'nvim-telescope/telescope.nvim',
         dependencies = { { 'nvim-lua/plenary.nvim' } },
         config = function()
-            local telescope = require('telescope.builtin')
             local actions = require('telescope.actions')
             require('telescope').setup({
                 defaults = {
+                    file_ignore_patterns = {
+                        "%.[Pp][Nn][Gg]$",
+                        "%.[Jj][Pp][Gg]$",
+                        "%.[Jj][Pp][Ee][Gg]$",
+                        "%.[Gg][Ii][Ff]$",
+                        "%.[Ww][Ee][Bb][Pp]$",
+                        "%.[Ss][Vv][Gg]$",
+                        "%.[Ii][Cc][Oo]$",
+                        "%.[Bb][Mm][Pp]$",
+                        "%.[Tt][Ii][Ff]$",
+                        "%.[Tt][Ii][Ff][Ff]$",
+                        "%.[Aa][Vv][Ii][Ff]$",
+                        "%.[Hh][Ee][Ii][Cc]$",
+                        "%.[Hh][Ee][Ii][Ff]$",
+                    },
                     mappings = {
                         i = {
                             ["<Tab>"] = actions.select_default,
