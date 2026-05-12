@@ -41,25 +41,6 @@ return {
         dependencies = { { 'nvim-lua/plenary.nvim' } },
         config = function()
             local actions = require('telescope.actions')
-            local function json_heavy_dir_patterns(limit)
-                local json_dir_counts = {}
-                for _, path in ipairs(vim.fn.glob('**/*.json', false, true)) do
-                    local dir = vim.fn.fnamemodify(path, ':h')
-                    json_dir_counts[dir] = (json_dir_counts[dir] or 0) + 1
-                end
-
-                local patterns = {}
-                for dir, count in pairs(json_dir_counts) do
-                    if count > limit then
-                        local normalized_dir = dir:gsub('^%./', '')
-                        if normalized_dir ~= '' and normalized_dir ~= '.' then
-                            table.insert(patterns, '^' .. vim.pesc(normalized_dir) .. '/')
-                        end
-                    end
-                end
-                table.sort(patterns)
-                return patterns
-            end
 
             local file_ignore_patterns = {
                 "%.[Pp][Nn][Gg]$",
@@ -76,7 +57,6 @@ return {
                 "%.[Hh][Ee][Ii][Cc]$",
                 "%.[Hh][Ee][Ii][Ff]$",
             }
-            vim.list_extend(file_ignore_patterns, json_heavy_dir_patterns(5))
 
             require('telescope').setup({
                 defaults = {
@@ -85,6 +65,11 @@ return {
                         i = {
                             ["<Tab>"] = actions.select_default,
                         },
+                    },
+                },
+                pickers = {
+                    find_files = {
+                        no_ignore = false,
                     },
                 },
             })
