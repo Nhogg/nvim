@@ -1,7 +1,6 @@
 return {
     'folke/lazy.nvim',
 
-    'theprimeagen/harpoon',
     'mbbill/undotree',
     'saadparwaiz1/cmp_luasnip',
     'tpope/vim-fugitive',
