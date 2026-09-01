@@ -41,6 +41,36 @@ vim.api.nvim_create_autocmd("FileType", {
   command = "setlocal colorcolumn=100",
 })
 
+local python_template_group = vim.api.nvim_create_augroup("PythonFileTemplate", { clear = true })
+
+vim.api.nvim_create_autocmd("BufNewFile", {
+  group = python_template_group,
+  pattern = "*.py",
+  callback = function(args)
+    if vim.api.nvim_buf_line_count(args.buf) ~= 1
+        or vim.api.nvim_buf_get_lines(args.buf, 0, 1, false)[1] ~= "" then
+      return
+    end
+
+    local filename = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(args.buf), ":t")
+    local lines = {
+      '"""' .. filename .. '.',
+      '',
+      'Author: Nathan Hogg <nathanhogg1223@gmail.com>',
+      'Description:',
+      '    TODO: Describe this module.',
+      '"""',
+      '',
+      'from __future__ import annotations',
+      '',
+      '',
+    }
+
+    vim.api.nvim_buf_set_lines(args.buf, 0, -1, false, lines)
+    vim.api.nvim_win_set_cursor(0, { 5, 10 })
+  end,
+})
+
 -- Auto-wrap markdown at 100 columns
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",

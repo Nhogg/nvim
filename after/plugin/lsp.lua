@@ -34,29 +34,23 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+
+    if client:supports_method('textDocument/inlayHint') then
+        vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+    end
 end)
 
-local function find_venv_path()
-    local uv = vim.loop
-    local dir = uv.cwd()
+local function find_venv_path(start_dir)
+    local uv = vim.uv or vim.loop
+    local dir = start_dir or uv.cwd()
 
     while dir do
         local venv_path = dir .. "/.venv"
-        local git_path = dir .. "/.git"
-
-        -- Check if .venv exists and is a directory
         local venv_stat = uv.fs_stat(venv_path)
         if venv_stat and venv_stat.type == "directory" then
             return venv_path
         end
 
-        -- Check if .git exists and is a directory
-        local git_stat = uv.fs_stat(git_path)
-        if git_stat and git_stat.type == "directory" then
-            return ""
-        end
-
-        -- Move to parent directory
         local parent_dir = uv.fs_realpath(dir .. "/..")
         if parent_dir == dir or parent_dir == nil then
             break
@@ -64,44 +58,44 @@ local function find_venv_path()
         dir = parent_dir
     end
 
-    return ""
+    return nil
+end
+
+local function python_settings(root_dir)
+    local venv = os.getenv("VIRTUAL_ENV") or find_venv_path(root_dir)
+    local settings = {
+        analysis = {
+            autoImportCompletions = true,
+            diagnosticMode = "workspace",
+            useLibraryCodeForTypes = true,
+        },
+    }
+    if venv then
+        settings.venvPath = vim.fn.fnamemodify(venv, ":h")
+        settings.venv = vim.fn.fnamemodify(venv, ":t")
+        settings.pythonPath = venv .. "/bin/python"
+    end
+    return settings
 end
 
 
--- Pyright is configured via mason-lspconfig below
-
-
 require('mason').setup({})
+
+vim.lsp.config('lua_ls', lsp.nvim_lua_ls())
+vim.lsp.config('pyright', {
+    settings = {
+        python = python_settings(vim.fn.getcwd()),
+    },
+})
+
 require('mason-lspconfig').setup({
     ensure_installed = {
         'pyright',
         'rust_analyzer',
         'eslint',
         "ts_ls",
-        'pyright',
     },
-    automatic_installation = true,
-    handlers = {
-        lsp.default_setup,
-        lua_ls = function()
-            local lua_opts = lsp.nvim_lua_ls()
-            require('lspconfig').lua_ls.setup(lua_opts)
-        end,
-        pyright = function()
-            require('lspconfig').pyright.setup({
-                settings = {
-                    python = (function()
-                        local venv = os.getenv("VIRTUAL_ENV")
-                        if venv then
-                            return { venvPath = vim.fn.fnamemodify(venv, ":h"), venv = vim.fn.fnamemodify(venv, ":t") }
-                        else
-                            return {} -- pyright will use system interpreter
-                        end
-                    end)(),
-                },
-            })
-        end,
-    }
+    automatic_enable = true,
 })
 
 
